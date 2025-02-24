@@ -14,10 +14,6 @@ USE SCHEMA variant;
 
 -- COMMAND ----------
 
-
-
--- COMMAND ----------
-
 CREATE OR REPLACE TABLE store_data AS
 SELECT parse_json(
   '{
