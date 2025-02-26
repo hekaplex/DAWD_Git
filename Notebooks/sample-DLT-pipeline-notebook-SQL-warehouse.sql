@@ -1,5 +1,5 @@
 -- Databricks notebook source
-USE CATALOG labuser9215760_1740409368;
+USE CATALOG dbacademy;
 CREATE SCHEMA IF NOT EXISTS streaming_sql;
 USE SCHEMA streaming_sql;
 
