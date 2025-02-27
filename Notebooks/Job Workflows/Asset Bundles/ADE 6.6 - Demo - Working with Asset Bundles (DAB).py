@@ -9,6 +9,53 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC # Using the Databricks CLI
+# MAGIC In this lesson, you will execute commands using the Databricks CLI. We will use the cluster web terminal for this demo.
+# MAGIC
+# MAGIC By the end of this lab, you should be able to:
+# MAGIC * Launch the driver's web terminal to run shell commands on the driver node
+# MAGIC * Install the Databricks CLI and configure authentication to a Databricks workspace
+# MAGIC * List files or clusters in your workspace to verify successful authentication
+# MAGIC * Configure Databricks Secrets
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Setup
+# MAGIC Run the classroom setup script in the next cell to configure the classroom.
+
+# COMMAND ----------
+
+# MAGIC %run ./Includes/Classroom-Setup-06.2
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC
+# MAGIC ## Install CLI
+# MAGIC
+# MAGIC Install the Databricks CLI using the following cell. Note that this procedure removes any existing version that may already be installed, and installs the newest version of the [Databricks CLI](https://docs.databricks.com/en/dev-tools/cli/index.html). A legacy version exists that is distributed through **`pip`**, however we recommend following the procedure here to install the newer one.
+
+# COMMAND ----------
+
+import os
+print(os.environ['DATABRICKS_HOST'])
+print(os.environ['DATABRICKS_TOKEN'])
+
+# COMMAND ----------
+
+# MAGIC %sh rm -f $(which databricks); curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/v0.211.0/install.sh | sh
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Authentication
+# MAGIC
+# MAGIC Usually, you would have to set up authentication for the CLI. But in this training environment, that's already taken care of if you ran through the accompanying *Generate Tokens* notebook. If you did, credentials will already be loaded into the **`DATABRICKS_HOST`** and **`DATABRICKS_TOKEN`** environment variables. If you did not, run through it now then restart this notebook.
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC # Demo - Working with Asset Bundles
 # MAGIC
 # MAGIC Databricks Asset Bundles are an excellent way to develop complex projects in your own development environment and deploy them to your Databricks workspace. You can use common CI/CD practices to keep track of the history of your workflow.
@@ -16,80 +63,6 @@
 # MAGIC In this demo, we will show you how to use a Databricks Asset Bundle to start, deploy, run, and destroy a simple workflow job.
 # MAGIC
 # MAGIC Normally, the process of working with asset bundles would be done in a terminal on your local computer or through a CI/CD workflow configured on your repository system (e.g., GitHub). In this demo, we will use shell scripts that run on the driver of the current cluster.
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Requirements
-# MAGIC
-# MAGIC Please review the following requirements before starting the lesson:
-# MAGIC
-# MAGIC * To run this notebook, you need to use one of the following Databricks runtime(s): **14.3.x-cpu-ml-scala2.12**
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC
-# MAGIC ## Classroom Setup
-# MAGIC
-# MAGIC Before starting the demo, run the provided classroom setup script. This script will define configuration variables necessary for the demo. Execute the following cell:
-
-# COMMAND ----------
-
-# MAGIC %run ../Includes/Classroom-Setup-1.1
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC **Other Conventions:**
-# MAGIC
-# MAGIC Throughout this demo, we'll refer to the object `DA`. This object, provided by Databricks Academy, contains variables such as your username, catalog name, schema name, working directory, and dataset locations. Run the code block below to view these details:
-
-# COMMAND ----------
-
-print(f"Username:          {DA.username}")
-print(f"Catalog Name:      {DA.catalog_name}")
-print(f"Schema Name:       {DA.schema_name}")
-print(f"Working Directory: {DA.paths.working_dir}")
-print(f"Dataset Location:  {DA.paths.datasets}")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ### Authentication
-# MAGIC
-# MAGIC Usually, you would have to set up authentication for the CLI. But in this training environment, that's already taken care of if you ran through the accompanying 
-# MAGIC **'Generate Tokens'** notebook. 
-# MAGIC If you did, credentials will already be loaded into the **`DATABRICKS_HOST`** and **`DATABRICKS_TOKEN`** environment variables. 
-# MAGIC
-# MAGIC #####*If you did not, run through it now then restart this notebook.*
-
-# COMMAND ----------
-
-DA.get_credentials()
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Install CLI
-# MAGIC
-# MAGIC Install the Databricks CLI using the following cell. Note that this procedure removes any existing version that may already be installed, and installs the newest version of the [Databricks CLI](https://docs.databricks.com/en/dev-tools/cli/index.html). A legacy version exists that is distributed through **`pip`**, however we recommend following the procedure here to install the newer one.
-
-# COMMAND ----------
-
-# MAGIC %sh
-# MAGIC rm -f $(which databricks); curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/v0.211.0/install.sh | sh
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Creating a Databricks Asset Bundle from a Template
-# MAGIC
-# MAGIC There are a handful of templates available that allow you to quickly create an asset bundle. We are going to use a python-based bundle that will generate a Databricks Workflow Job.
-# MAGIC
-# MAGIC In your day-to-day work, you can start with a template and make changes to it as needed, or you can create [your own templates](https://docs.databricks.com/en/dev-tools/bundles/templates.html).
-# MAGIC
-# MAGIC The command below invokes the Databricks CLI and uses the `init` command from the `bundle` command group to create and initialize a bundle from the `default-python` template.
 
 # COMMAND ----------
 
@@ -108,10 +81,6 @@ DA.get_credentials()
 # MAGIC We are going to make a few changes before we deploy this bundle. We are going to change the job configuration to use the same cluster we are currently using, instead of a Jobs Cluster. This is not recommended practice, but we are doing it just for the sake of this course.
 # MAGIC
 # MAGIC Run the cell below to make these changes.
-
-# COMMAND ----------
-
-DA.update_bundle()
 
 # COMMAND ----------
 
@@ -164,6 +133,12 @@ DA.update_bundle()
 # MAGIC %sh
 # MAGIC cd my_project
 # MAGIC databricks bundle run my_project_job
+
+# COMMAND ----------
+
+# MAGIC %sh
+# MAGIC job_id=$(databricks jobs list | awk '/my_project_job/ {print $1; exit}')
+# MAGIC echo "Job ID: $job_id"
 
 # COMMAND ----------
 
@@ -278,25 +253,8 @@ else:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Clean Up
-# MAGIC After completing the demo, it's essential to remove any resources generated during its execution. Run the following cell to remove all assets specifically created during this demonstration:
-
-# COMMAND ----------
-
-DA.cleanup(validate_datasets=False)
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ### Conclusion
 # MAGIC
-# MAGIC In this demo, we focused on building, modifying, and exploring jobs using Databricks Asset Bundles within an MLOps context. We ensured the steps align with best practices for operationalizing machine learning models, including job execution, CI/CD integration, and monitoring. We also demonstrated how to modify and redeploy jobs to adapt to changing requirements.
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC
-# MAGIC &copy; 2024 Databricks, Inc. All rights reserved.<br/>
+# MAGIC &copy; 2025 Databricks, Inc. All rights reserved.<br/>
 # MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the 
 # MAGIC <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/><a href="https://databricks.com/privacy-policy">Privacy Policy</a> | 
