@@ -91,7 +91,7 @@
 # MAGIC ## C. Add the `For Each` Task
 # MAGIC We are going to make some changes to this job and configure our main task to query the tables defined in the previous task.
 # MAGIC
-# MAGIC 1. Remove the **Parameters** from the current task and move them to teh Job level **Job Parameters** as individual key/value pairs
+# MAGIC 1. Remove the **Parameters** from the current task and move them to the Job level **Job Parameters** as individual key/value pairs
 # MAGIC 1. Click on the blue **Create task** button hovering above the one task in the job
 # MAGIC 1. Configure the task:
 # MAGIC       |Task Configuration| Value|
