@@ -1,5 +1,5 @@
 -- Databricks notebook source
-USE hive_metastore.labuser6737320_1741615056_30pd_da_adewd_4_1
+USE ${catalog}.${schema}
 
 -- COMMAND ----------
 
@@ -14,24 +14,26 @@ FROM
 
 -- COMMAND ----------
 
-CREATE
-OR REFRESH MATERIALIZED VIEW total_fare_amount_by_week AS
+CREATE MATERIALIZED VIEW total_fare_amount_by_week AS
 SELECT
   date_trunc("week", tpep_pickup_datetime) as week,
   SUM(fare_amount) as total_amount
 FROM
-  live.taxi_raw_records
+  taxi_raw_records
 GROUP BY
   week
 
 -- COMMAND ----------
 
-CREATE
-OR REFRESH MATERIALIZED VIEW max_distance_by_week AS
+CREATE MATERIALIZED VIEW max_distance_by_week AS
 SELECT
   date_trunc("week", tpep_pickup_datetime) as week,
   MAX(trip_distance) as max_distance
 FROM
-  live.taxi_raw_records
+  taxi_raw_records
 GROUP BY
   week
+
+-- COMMAND ----------
+
+
