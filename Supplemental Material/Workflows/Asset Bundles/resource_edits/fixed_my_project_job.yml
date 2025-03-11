@@ -11,11 +11,11 @@ resources:
 
       email_notifications:
         on_failure:
-          - labuser9412019_1740990480@vocareum.com
+          - labuser9200150_1741280927@vocareum.com
 
       tasks:
         - task_key: notebook_task
-          existing_cluster_id: 0310-135808-m165n8s
+          existing_cluster_id: 0306-170916-11ypqeh3
           #job_cluster_key: job_cluster
           notebook_task:
             notebook_path: ../src/notebook.ipynb
